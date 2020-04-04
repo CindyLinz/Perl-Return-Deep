@@ -14,7 +14,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(deep_ret);
 
-our $VERSION = '1.000';
+our $VERSION = '1.001';
 
 require XSLoader;
 XSLoader::load('Return::Deep', $VERSION);
@@ -65,7 +65,7 @@ Tested on Perl version 5.30.2, 5.28.2, 5.26.3, 5.24.4, 5.22.4, 5.20.3, 5.18.4, 5
 
 =head1 SEE ALSO
 
-This mod's github L<https://github.com/CindyLinz/Perl-Deep-Return>.
+This mod's github L<https://github.com/CindyLinz/Perl-Return-Deep>.
 It's welcome to discuss with me when you encounter bugs, or
 if you think that some patterns are also useful but the mod didn't provide them yet.
 
