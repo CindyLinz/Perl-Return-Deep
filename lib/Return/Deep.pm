@@ -14,7 +14,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(deep_ret);
 
-our $VERSION = '0.01';
+our $VERSION = '1.000';
 
 require XSLoader;
 XSLoader::load('Return::Deep', $VERSION);
