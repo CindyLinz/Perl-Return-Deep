@@ -3,107 +3,76 @@ package Return::Deep;
 use 5.030001;
 use strict;
 use warnings;
-use Carp;
 
 require Exporter;
-use AutoLoader;
 
 our @ISA = qw(Exporter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration	use Return::Deep ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	deep_ret
-) ] );
+our %EXPORT_TAGS = ( 'all' => [ qw(deep_ret) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our @EXPORT = qw(
-	deep_ret
-);
+our @EXPORT = qw(deep_ret);
 
 our $VERSION = '0.01';
-
-sub AUTOLOAD {
-    # This AUTOLOAD is used to 'autoload' constants from the constant()
-    # XS function.
-
-    my $constname;
-    our $AUTOLOAD;
-    ($constname = $AUTOLOAD) =~ s/.*:://;
-    croak "&Return::Deep::constant not defined" if $constname eq 'constant';
-    my ($error, $val) = constant($constname);
-    if ($error) { croak $error; }
-    {
-	no strict 'refs';
-	# Fixed between 5.005_53 and 5.005_61
-#XXX	if ($] >= 5.00561) {
-#XXX	    *$AUTOLOAD = sub () { $val };
-#XXX	}
-#XXX	else {
-	    *$AUTOLOAD = sub { $val };
-#XXX	}
-    }
-    goto &$AUTOLOAD;
-}
 
 require XSLoader;
 XSLoader::load('Return::Deep', $VERSION);
 
-# Preloaded methods go here.
-
-# Autoload methods go after =cut, and are processed by the autosplit program.
-
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-Return::Deep - Perl extension for blah blah blah
+Return::Deep - deeply returns through multiple layers at once
 
 =head1 SYNOPSIS
 
   use Return::Deep;
-  blah blah blah
+
+  sub a {
+    b();
+  }
+
+  sub b {
+    deep_ret(2, 'Hi', 42);
+  }
+
+  my @ret = a();
+  # got ('Hi', 42) here
+
 
 =head1 DESCRIPTION
 
-Stub documentation for Return::Deep, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
+Deeply returns through multiple layers at once.
 
 =head2 EXPORT
 
-None by default.
+=over 4
 
+=item deep_ret($depth, @return_value)
 
+If L<$depth> = 1, it performs like a normal return.
+
+If L<$depth> <= 0, it performs like a normal list.
+
+If L<$depth> > 1, it returns through many layers, including subs and eval blocks.
+
+=back
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+This mod's github L<https://github.com/CindyLinz/Perl-Deep-Return>.
+It's welcome to discuss with me when you encounter bugs, or
+if you think that some patterns are also useful but the mod didn't provide them yet.
 
 =head1 AUTHOR
 
-A. U. Thor, E<lt>cindy@nonetE<gt>
+Cindy Wang (CindyLinz), E<lt>cindy@cpan.org<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2020 by A. U. Thor
+Copyright (C) 2020 by Cindy Wang (CindyLinz)
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.30.1 or,
