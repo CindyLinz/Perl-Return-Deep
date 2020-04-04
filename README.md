@@ -8,6 +8,7 @@ Return::Deep - deeply returns through multiple layers at once
 
     sub a {
       b();
+      # never goes here
     }
 
     sub b {

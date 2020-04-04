@@ -14,7 +14,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(deep_ret);
 
-our $VERSION = '1.001';
+our $VERSION = '1.001001';
 
 require XSLoader;
 XSLoader::load('Return::Deep', $VERSION);
@@ -32,6 +32,7 @@ Return::Deep - deeply returns through multiple layers at once
 
   sub a {
     b();
+    # never goes here
   }
 
   sub b {
