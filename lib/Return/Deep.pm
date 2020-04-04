@@ -52,11 +52,11 @@ Deeply returns through multiple layers at once.
 
 =item deep_ret($depth, @return_value)
 
-If L<$depth> = 1, it performs like a normal return.
+If C<$depth> = 1, it performs like a normal return.
 
-If L<$depth> <= 0, it performs like a normal list.
+If C<$depth> <= 0, it performs like a normal list.
 
-If L<$depth> > 1, it returns through many layers, including subs and eval blocks.
+If C<$depth> > 1, it returns through many layers, including subs and eval blocks.
 
 =back
 
@@ -71,7 +71,7 @@ if you think that some patterns are also useful but the mod didn't provide them 
 
 =head1 AUTHOR
 
-Cindy Wang (CindyLinz), E<lt>cindy@cpan.org<gt>
+Cindy Wang (CindyLinz), E<lt>cindy@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

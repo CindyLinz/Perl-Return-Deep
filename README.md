@@ -25,11 +25,11 @@ Deeply returns through multiple layers at once.
 
 - deep\_ret($depth, @return\_value)
 
-    If [$depth](https://metacpan.org/pod/%24depth) = 1, it performs like a normal return.
+    If `$depth` = 1, it performs like a normal return.
 
-    If [$depth](https://metacpan.org/pod/%24depth) <= 0, it performs like a normal list.
+    If `$depth` <= 0, it performs like a normal list.
 
-    If [$depth](https://metacpan.org/pod/%24depth) > 1, it returns through many layers, including subs and eval blocks.
+    If `$depth` > 1, it returns through many layers, including subs and eval blocks.
 
 Tested on Perl version perl-5.30.2, perl-5.28.2, perl-5.26.3, perl-5.24.4, perl-5.22.4, perl-5.20.3, perl-5.18.4, perl-5.16.3, perl-5.14.4, perl-5.12.5, perl-5.10.1, perl-5.8.9.
 
@@ -41,7 +41,7 @@ if you think that some patterns are also useful but the mod didn't provide them 
 
 # AUTHOR
 
-Cindy Wang (CindyLinz), &lt;cindy@cpan.org&lt;gt>
+Cindy Wang (CindyLinz), <cindy@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
