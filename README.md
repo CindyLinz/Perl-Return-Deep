@@ -31,7 +31,7 @@ Deeply returns through multiple layers at once.
 
     If `$depth` > 1, it returns through many layers, including subs and eval blocks.
 
-Tested on Perl version perl-5.30.2, perl-5.28.2, perl-5.26.3, perl-5.24.4, perl-5.22.4, perl-5.20.3, perl-5.18.4, perl-5.16.3, perl-5.14.4, perl-5.12.5, perl-5.10.1, perl-5.8.9.
+Tested on Perl version 5.30.2, 5.28.2, 5.26.3, 5.24.4, 5.22.4, 5.20.3, 5.18.4, 5.16.3, 5.14.4, 5.12.5, 5.10.1, 5.8.9.
 
 # SEE ALSO
 
