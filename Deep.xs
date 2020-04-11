@@ -18,7 +18,7 @@ static OP * my_pp_deep_ret(pTHX){
 
     IV depth = SvIV(PL_stack_base[TOPMARK+1]);
 
-    for(SV ** p = PL_stack_base+TOPMARK; p<SP; ++p)
+    for(SV ** p = PL_stack_base+TOPMARK+1; p<SP; ++p)
         *p = *(p+1);
     POPs;
 
