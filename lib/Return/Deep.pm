@@ -46,6 +46,17 @@ Return::Deep - deeply returns through multiple layers at once
   my @ret = a();
   # got ('Hi', 42) here
 
+  my @outer_ret = ret_bound {
+      my @inner_ret = ret_bound {
+          if( .5 < rand ) {
+              sym_ret('inner', 43); # @inner_ret got 43
+          }
+          else {
+              sym_ret('any', 43); # @outer_ret got 44
+          }
+      } 'inner'; # catch 'inner'
+  }; # catch all symbols without a catch symbol
+
 
 =head1 DESCRIPTION
 
@@ -62,6 +73,16 @@ If C<$depth> = 1, it performs like a normal return.
 If C<$depth> <= 0, it performs like a normal list.
 
 If C<$depth> > 1, it returns through many layers, including subs and eval blocks.
+
+=item sym_ret($symbol, @return_value)
+
+Return through many layers, until the C<$symbol> is catched by a matched C<ret_bound>.
+
+=item ret_bound {CODE_BLOCK} $catch_symbol
+
+=item ret_bound {CODE_BLOCK}
+
+Catch matched C<sym_ret>s. Without the C<$catch_symbol>, it will catch all the C<sym_ret>.
 
 =back
 
