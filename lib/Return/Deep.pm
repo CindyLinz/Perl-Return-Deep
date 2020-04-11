@@ -8,16 +8,20 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-our %EXPORT_TAGS = ( 'all' => [ qw(deep_ret) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(deep_ret);
+our %EXPORT_TAGS = (all => [ qw(deep_ret sym_ret ret_bound) ]);
+our @EXPORT_OK = @{$EXPORT_TAGS{all}};
+our @EXPORT = @{$EXPORT_TAGS{all}};
 
 our $VERSION = '1.002';
 
 require XSLoader;
 XSLoader::load('Return::Deep', $VERSION);
+
+sub ret_bound(&;$) {
+    my($act, $symbol) = @_;
+    my $guard = add_bound($act, $symbol);
+    $act->();
+}
 
 1;
 __END__
