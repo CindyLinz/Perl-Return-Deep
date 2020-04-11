@@ -12,7 +12,7 @@ our %EXPORT_TAGS = (all => [ qw(deep_ret sym_ret ret_bound) ]);
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = @{$EXPORT_TAGS{all}};
 
-our $VERSION = '1.002';
+our $VERSION = '1.003';
 
 require XSLoader;
 XSLoader::load('Return::Deep', $VERSION);
