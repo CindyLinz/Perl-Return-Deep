@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 14;
 BEGIN { use_ok('Return::Deep') };
 
 #########################
@@ -71,7 +71,7 @@ sub yy {
         push @Output, "[yy ret_bound begin]";
         my @ret = zz();
         push @Output, "[yy ret_bound end with @ret]";
-    } 'yy';
+    } qr/^yy/;
     push @Output, "[yy end with @ret]";
 }
 
@@ -111,4 +111,5 @@ test_sym('zz', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_b
 test_sym('any', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [test_sym end with 2 3 a]');
 test_sym('', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [test_sym end with 2 3 a]');
 test_sym(undef, '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [test_sym end with 2 3 a]');
-test_sym('yy', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [yy end with 2 3 a] [xx ret_bound end with 9] [xx end with 10] [test_sym ret_bound end with 11] [test_sym end with 12]');
+test_sym('yyy', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [yy end with 2 3 a] [xx ret_bound end with 9] [xx end with 10] [test_sym ret_bound end with 11] [test_sym end with 12]');
+test_sym('ayy', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [test_sym end with 2 3 a]');
