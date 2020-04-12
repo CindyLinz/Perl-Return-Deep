@@ -49,18 +49,21 @@ static OP * my_pp_sym_ret(pTHX){
         *p = *(p+1);
     POPs;
 
-    while(true){
+    while(TRUE){
         for(PERL_CONTEXT * cx = &cxstack[cxstack_ix]; cx>=cxstack; --cx){
             switch( CxTYPE(cx) ){
                 default:
                     continue;
                 case CXt_SUB:
+#if PERL_VERSION_GE(5,18,0)
                     if( cx->cx_type & CXp_SUB_RE_FAKE )
                         continue;
+#endif
                     for(struct block_symbol_t *p = block_symbols+block_symbols_n-1; p>=block_symbols; --p)
                         if( p->cv == cx->blk_sub.cv ){
                             if( !SvOK(p->symbol_SV) )
                                 RETURNOP(return_ppaddr(aTHX));
+#if PERL_VERSION_GE(5,10,0)
                             if( SvRXOK(p->symbol_SV) ){
                                 PUSHMARK(SP);
                                 EXTEND(SP, 2);
@@ -75,10 +78,10 @@ static OP * my_pp_sym_ret(pTHX){
                                 if( match_res )
                                     RETURNOP(return_ppaddr(aTHX));
                             }
-                            else{
+                            else
+#endif
                                 if( sv_cmp(p->symbol_SV, symbol_SV)==0 )
                                     RETURNOP(return_ppaddr(aTHX));
-                            }
                         }
                 case CXt_EVAL:
                 case CXt_FORMAT:
