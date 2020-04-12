@@ -20,6 +20,8 @@ static Perl_ppaddr_t return_ppaddr;
 static struct block_symbol_t * block_symbols;
 static int block_symbols_capacity, block_symbols_n;
 
+static SV * regex_match_sv;
+
 static OP * my_pp_deep_ret(pTHX){
     dSP; POPs;
 
@@ -57,8 +59,26 @@ static OP * my_pp_sym_ret(pTHX){
                         continue;
                     for(struct block_symbol_t *p = block_symbols+block_symbols_n-1; p>=block_symbols; --p)
                         if( p->cv == cx->blk_sub.cv ){
-                            if( !SvOK(p->symbol_SV) || sv_cmp(p->symbol_SV, symbol_SV)==0 )
+                            if( !SvOK(p->symbol_SV) )
                                 RETURNOP(return_ppaddr(aTHX));
+                            if( SvRXOK(p->symbol_SV) ){
+                                PUSHMARK(SP);
+                                EXTEND(SP, 2);
+                                PUSHs(p->symbol_SV);
+                                PUSHs(symbol_SV);
+                                PUTBACK;
+                                call_sv(regex_match_sv, G_SCALAR);
+                                SPAGAIN;
+                                IV match_res = POPi;
+                                PUTBACK;
+
+                                if( match_res )
+                                    RETURNOP(return_ppaddr(aTHX));
+                            }
+                            else{
+                                if( sv_cmp(p->symbol_SV, symbol_SV)==0 )
+                                    RETURNOP(return_ppaddr(aTHX));
+                            }
                         }
                 case CXt_EVAL:
                 case CXt_FORMAT:
@@ -156,6 +176,8 @@ BOOT:
     block_symbols_capacity = 8;
     block_symbols_n = 0;
     Newx(block_symbols, block_symbols_capacity, struct block_symbol_t);
+
+    regex_match_sv = newRV_inc((SV*)get_cv("Return::Deep::regex_match", FALSE));
 
     return_ppaddr = PL_ppaddr[OP_RETURN];
 #if PERL_VERSION_GE(5,14,0)

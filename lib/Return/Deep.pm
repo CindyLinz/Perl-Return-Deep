@@ -23,6 +23,11 @@ sub ret_bound(&;$) {
     $act->();
 }
 
+sub regex_match {
+    no warnings 'uninitialized';
+    $_[1] =~ $_[0];
+}
+
 1;
 __END__
 
