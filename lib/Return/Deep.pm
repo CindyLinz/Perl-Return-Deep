@@ -52,14 +52,19 @@ Return::Deep - deeply returns through multiple layers at once
   # got ('Hi', 42) here
 
   my @outer_ret = ret_bound {
+    my @regex_ret = ret_bound {
       my @inner_ret = ret_bound {
-          if( .5 < rand ) {
-              sym_ret('inner', 43); # @inner_ret got 43
-          }
-          else {
-              sym_ret('any', 43); # @outer_ret got 44
-          }
+        if( .2 < rand ) {
+            sym_ret('inner', 43); # @inner_ret got 43
+        }
+        elsif( .5 < rand ) {
+            sym_ret('Error::SomeError', 45); # @regex_ret got 45
+        }
+        else {
+            sym_ret('any', 43); # @outer_ret got 44
+        }
       } 'inner'; # catch 'inner'
+    } qr/^Error::/; # catch all symbols which begin with 'Error::' by regex
   }; # catch all symbols without a catch symbol
 
 
@@ -88,6 +93,12 @@ Return through many layers, until the C<$symbol> is catched by a matched C<ret_b
 =item ret_bound {CODE_BLOCK}
 
 Catch matched C<sym_ret>s. Without the C<$catch_symbol>, it will catch all the C<sym_ret>.
+
+C<$catch_symbol> could be a string or a regular expression (C<qr/something/>).
+If C<$catch_symbol> is a string, it will catch C<sym_ret> with an exactly match.
+If C<$catch_symbol> is a regular expression, it will catch C<sym_ret> with a regular expression test.
+
+(C<$catch_symbol> with regular expresion is not supported before Perl 5.10)
 
 =back
 
