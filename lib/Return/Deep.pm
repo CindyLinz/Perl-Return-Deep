@@ -8,7 +8,7 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-our %EXPORT_TAGS = (all => [ qw(deep_ret sym_ret ret_bound) ]);
+our %EXPORT_TAGS = (all => [ qw(deep_ret sym_ret ret_bound deep_wantarray sym_wantarray) ]);
 our @EXPORT_OK = @{$EXPORT_TAGS{all}};
 our @EXPORT = @{$EXPORT_TAGS{all}};
 

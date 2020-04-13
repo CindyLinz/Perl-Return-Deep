@@ -175,6 +175,104 @@ void add_bound(SV * act_SV, SV * symbol_SV)
 
         PUSHs(sv_2mortal(newRV_noinc(guard_SV)));
 
+void deep_wantarray(IV depth)
+    PPCODE:
+        if( depth<1 )
+            croak("deep_wantarray with non-positive depth");
+
+        PERL_CONTEXT * cx = &cxstack[cxstack_ix];
+        for(; cx>=cxstack; --cx)
+            switch( CxTYPE(cx) ){
+                default:
+                    continue;
+                case CXt_SUB:
+#if PERL_VERSION_GE(5,18,0)
+                    if( cx->cx_type & CXp_SUB_RE_FAKE )
+                        continue;
+#endif
+                case CXt_EVAL:
+                case CXt_FORMAT:
+                    if( --depth <= 0 )
+                        goto FOUND;
+            }
+        FOUND:
+
+        if( cx<cxstack )
+            PUSHs(&PL_sv_undef);
+        else
+            switch(cx->blk_gimme & G_WANT){
+                case G_VOID:
+                    PUSHs(&PL_sv_undef);
+                    break;
+                case G_SCALAR:
+                    PUSHs(&PL_sv_no);
+                    break;
+                case G_ARRAY:
+                    PUSHs(&PL_sv_yes);
+                    break;
+                default:
+                    croak("Unknown wantarray");
+            }
+
+void sym_wantarray(SV * symbol_SV)
+    PPCODE:
+        PERL_CONTEXT * cx = &cxstack[cxstack_ix];
+        for(; cx>=cxstack; --cx){
+            switch( CxTYPE(cx) ){
+                default:
+                    continue;
+                case CXt_SUB:
+#if PERL_VERSION_GE(5,18,0)
+                    if( cx->cx_type & CXp_SUB_RE_FAKE )
+                        continue;
+#endif
+                    for(struct block_symbol_t *p = block_symbols+block_symbols_n-1; p>=block_symbols; --p)
+                        if( p->cv == cx->blk_sub.cv ){
+                            if( !SvOK(p->symbol_SV) )
+                                break;
+#if PERL_VERSION_GE(5,10,0)
+                            if( SvRXOK(p->symbol_SV) ){
+                                PUSHMARK(SP);
+                                EXTEND(SP, 2);
+                                PUSHs(p->symbol_SV);
+                                PUSHs(symbol_SV);
+                                PUTBACK;
+                                call_sv(regex_match_sv, G_SCALAR);
+                                SPAGAIN;
+                                IV match_res = POPi;
+                                PUTBACK;
+
+                                if( match_res )
+                                    goto FOUND;
+                            }
+                            else
+#endif
+                                if( sv_cmp(p->symbol_SV, symbol_SV)==0 )
+                                    goto FOUND;
+                        }
+                case CXt_EVAL:
+                case CXt_FORMAT:
+                    break;
+            }
+        }
+        FOUND:
+        if( cx<cxstack )
+            PUSHs(&PL_sv_undef);
+        else
+            switch(cx->blk_gimme & G_WANT){
+                case G_VOID:
+                    PUSHs(&PL_sv_undef);
+                    break;
+                case G_SCALAR:
+                    PUSHs(&PL_sv_no);
+                    break;
+                case G_ARRAY:
+                    PUSHs(&PL_sv_yes);
+                    break;
+                default:
+                    croak("Unknown wantarray");
+            }
+
 BOOT:
     block_symbols_capacity = 8;
     block_symbols_n = 0;
