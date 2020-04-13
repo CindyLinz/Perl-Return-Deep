@@ -11,6 +11,10 @@
 #define PERL_DECIMAL_VERSION PERL_VERSION_DECIMAL(PERL_REVISION,PERL_VERSION,PERL_SUBVERSION)
 #define PERL_VERSION_GE(r,v,s) (PERL_DECIMAL_VERSION >= PERL_VERSION_DECIMAL(r,v,s))
 
+#ifndef G_WANT
+#define G_WANT (G_VOID|G_SCALAR|G_ARRAY)
+#endif
+
 struct block_symbol_t {
     CV * cv;
     SV * symbol_SV;

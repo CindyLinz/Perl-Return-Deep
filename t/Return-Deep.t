@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 14;
+use Test::More tests => 30;
 BEGIN { use_ok('Return::Deep') };
 
 #########################
@@ -119,3 +119,49 @@ else {
     test_sym('yyy', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [test_sym end with 2 3 a]');
     test_sym('ayy', '[test_sym begin] [test_sym ret_bound begin] [xx begin] [xx ret_bound begin] [yy begin] [yy ret_bound begin] [zz begin] [zz ret_bound begin] [test_sym end with 2 3 a]');
 }
+
+sub translate_wantarray {
+    if( defined($_[0]) ) {
+        return 1 if( $_[0] );
+        return 0;
+    }
+    return -1;
+}
+sub wantarray_a {
+    my $res = ret_bound { # scalar
+        wantarray_b(); # void
+        return;
+    } 'a';
+}
+sub wantarray_b {
+    my @res = ret_bound { # array
+        my $res = wantarray_c(); # scalar
+    } 'b';
+}
+sub wantarray_c {
+    ret_bound { # void
+        my @res = wantarray_d(); # array
+    } 'c';
+    return;
+}
+sub wantarray_d {
+    is(translate_wantarray(deep_wantarray(1)), 1, 'deep_wantarray(1)');
+    is(translate_wantarray(deep_wantarray(2)), -1, 'deep_wantarray(2)');
+    is(translate_wantarray(deep_wantarray(3)), -1, 'deep_wantarray(3)');
+    is(translate_wantarray(deep_wantarray(4)), 0, 'deep_wantarray(4)');
+    is(translate_wantarray(deep_wantarray(5)), 1, 'deep_wantarray(5)');
+    is(translate_wantarray(deep_wantarray(6)), 1, 'deep_wantarray(6)');
+    is(translate_wantarray(deep_wantarray(7)), -1, 'deep_wantarray(7)');
+    is(translate_wantarray(deep_wantarray(8)), 0, 'deep_wantarray(8)');
+    is(translate_wantarray(deep_wantarray(9)), 0, 'deep_wantarray(9)');
+    is(translate_wantarray(deep_wantarray(10)), 0, 'deep_wantarray(10)');
+    is(translate_wantarray(deep_wantarray(11)), -1, 'deep_wantarray(11)');
+    is(translate_wantarray(deep_wantarray(12)), -1, 'deep_wantarray(12)');
+
+    is(translate_wantarray(sym_wantarray('a')), 0, "sym_wantarray('a')");
+    is(translate_wantarray(sym_wantarray('b')), 1, "sym_wantarray('b')");
+    is(translate_wantarray(sym_wantarray('c')), -1, "sym_wantarray('c')");
+    is(translate_wantarray(sym_wantarray('d')), -1, "sym_wantarray('d')");
+}
+
+scalar wantarray_a();
