@@ -33,7 +33,7 @@ __END__
 
 =head1 NAME
 
-Return::Deep - deeply returns through multiple layers at once
+Return::Deep - deeply returns through multiple layers at once, and special wantarray functions
 
 =head1 SYNOPSIS
 
@@ -45,6 +45,8 @@ Return::Deep - deeply returns through multiple layers at once
   }
 
   sub b {
+    my $wantarray = deep_wantarray(2);
+        # got a true value, because of `@ret = a();`
     deep_ret(2, 'Hi', 42);
   }
 
@@ -54,6 +56,9 @@ Return::Deep - deeply returns through multiple layers at once
   my @outer_ret = ret_bound {
     my @regex_ret = ret_bound {
       my @inner_ret = ret_bound {
+        my $wantarray = sym_wantarray('inner');
+            # got a true value, because of
+            #       `@inner_ret = ret_bound {...} 'inner';`
         if( .2 < rand ) {
             sym_ret('inner', 43); # @inner_ret got 43
         }
@@ -99,6 +104,14 @@ If C<$catch_symbol> is a string, it will catch C<sym_ret> with an exactly match.
 If C<$catch_symbol> is a regular expression, it will catch C<sym_ret> with a regular expression test.
 
 (C<$catch_symbol> with regular expresion is not supported before Perl 5.10)
+
+=item $wantarray = deep_wantarray($depth)
+
+Like builtin function C<wantarray>, but at specified C<$depth>.
+
+=item $wantarray = sym_wantarray($symbol)
+
+Like builtin function C<wantarray>, but at certain C<ret_bound> which catch the <$symbol>.
 
 =back
 
