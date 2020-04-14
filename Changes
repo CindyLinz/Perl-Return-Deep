@@ -15,3 +15,6 @@ Revision history for Perl extension Return::Deep.
 1.4     2020.4.12
         `ret_bound` with regex. (Perl version 5.10 or later)
         Fix compatibility issues with old versions.
+
+1.5     2020.4.14
+        Introduce `deep_wantarray` and `sym_wantarray`.
