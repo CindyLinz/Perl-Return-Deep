@@ -1,6 +1,6 @@
 # NAME
 
-Return::Deep - deeply returns through multiple layers at once
+Return::Deep - deeply returns through multiple layers at once, and special wantarray functions
 
 # SYNOPSIS
 
@@ -12,6 +12,8 @@ Return::Deep - deeply returns through multiple layers at once
     }
 
     sub b {
+      my $wantarray = deep_wantarray(2);
+          # got a true value, because of `@ret = a();`
       deep_ret(2, 'Hi', 42);
     }
 
@@ -21,6 +23,9 @@ Return::Deep - deeply returns through multiple layers at once
     my @outer_ret = ret_bound {
       my @regex_ret = ret_bound {
         my @inner_ret = ret_bound {
+          my $wantarray = sym_wantarray('inner');
+              # got a true value, because of
+              #       `@inner_ret = ret_bound {...} 'inner';`
           if( .2 < rand ) {
               sym_ret('inner', 43); # @inner_ret got 43
           }
@@ -62,6 +67,14 @@ Deeply returns through multiple layers at once.
     If `$catch_symbol` is a regular expression, it will catch `sym_ret` with a regular expression test.
 
     (`$catch_symbol` with regular expresion is not supported before Perl 5.10)
+
+- $wantarray = deep\_wantarray($depth)
+
+    Like builtin function `wantarray`, but at specified `$depth`.
+
+- $wantarray = sym\_wantarray($symbol)
+
+    Like builtin function `wantarray`, but at certain `ret_bound` which catch the &lt;$symbol>.
 
 Tested on Perl version 5.30.2, 5.28.2, 5.26.3, 5.24.4, 5.22.4, 5.20.3, 5.18.4, 5.16.3, 5.14.4, 5.12.5, 5.10.1, 5.8.9.
 
